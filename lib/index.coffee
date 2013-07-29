@@ -25,9 +25,9 @@ module.exports = X = ( func ) ->
 
 stack = []
 current = -> stack[stack.length - 1]
-X.sub = (f) -> current()._ctx().sub f
-X.exit = (f) -> current()._ctx().exit f
-X.invalidator = -> b = current() ; -> b._ctx().invalidate()
+X.sub = (f) -> current()._sub f
+X.exit = (f) -> current()._exit f
+X.invalidator = -> b = current() ; -> b._invalidate()
 
 
 class Block
@@ -35,11 +35,9 @@ class Block
   descendant_invalid: no
   constructor: ( @parent, @func ) ->
 
-  # this is the API that we expose to the users of this library
-  _ctx: -> @__ctx ?= do =>
-    sub:    (f) => b = new Block @, f ; @children.push b ; b.enter()
-    exit:   (f) => @exit_handler = f
-    invalidate: => @invalidate_by_func()      
+  _sub:    (f) -> b = new Block @, f ; @children.push b ; b.enter()
+  _exit:   (f) -> @exit_handler = f
+  _invalidate: -> @invalidate_by_func()      
 
   enter: ->
     @invalid = no
@@ -51,7 +49,7 @@ class Block
 
     # push, run, pop
     stack.push @
-    {result, error, monitor} = reactivity => @func.apply @_ctx(), null 
+    {result, error, monitor} = reactivity => @func() 
     stack.pop()
 
     if error?   then @bubble_error error
