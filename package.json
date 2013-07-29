@@ -1,7 +1,7 @@
 {
   "name": "ftree",
   "version": "0.0.1",
-  "description": "",
+  "description": "Reactive Dynamic Hierarchical State Machine",
   "author": "Aldo Bucchi <aldo.bucchi@gmail.com>",
   "main": "lib",
   "scripts": {
